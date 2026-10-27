@@ -1,1 +1,19 @@
 @import "tailwindcss";
+
+@font-face {
+  font-family: "Determination Mono";
+  src: url("/determination-mono-web-font/DeterminationMonoWebRegular-Z5oq.ttf") format("truetype");
+  font-display: swap;
+}
+
+@theme {
+  --font-ut: "Determination Mono", monospace;
+}
+
+body {
+  background: #000;
+  color: #fff;
+  -webkit-font-smoothing: none;
+  font-smooth: never;
+  -webkit-tap-highlight-color: transparent;
+}
