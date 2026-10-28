@@ -21,6 +21,14 @@ const OPTIONS: { id: Option; label: string }[] = [
 const saveSound = new Audio();
 saveSound.src = `${import.meta.env.BASE_URL}${saveSound.canPlayType("audio/ogg; codecs=vorbis") ? "save.ogg" : "save.wav"}`;
 
+const selectSound = new Audio(`${import.meta.env.BASE_URL}ut_menu_select.mp3`);
+
+// Restart from the beginning so rapid triggers each play; ignore autoplay blocks.
+const play = (sound: HTMLAudioElement) => {
+  sound.currentTime = 0;
+  sound.play().catch(() => {});
+};
+
 const SaveMenu = ({
   name,
   lv,
@@ -31,10 +39,15 @@ const SaveMenu = ({
 }: SaveMenuProps) => {
   const [selected, setSelected] = useState<Option>("save");
 
+  const select = (option: Option) => {
+    if (option === selected) return;
+    play(selectSound);
+    setSelected(option);
+  };
+
   const confirm = (option: Option) => {
     if (option === "save") {
-      saveSound.currentTime = 0;
-      saveSound.play().catch(() => {});
+      play(saveSound);
       onSave?.();
     } else onReturn?.();
   };
@@ -42,7 +55,7 @@ const SaveMenu = ({
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
-        setSelected((s) => (s === "save" ? "return" : "save"));
+        select(selected === "save" ? "return" : "save");
       } else if (e.key === "Enter" || e.key === "z" || e.key === "Z") {
         confirm(selected);
       }
@@ -64,11 +77,9 @@ const SaveMenu = ({
           <button
             key={id}
             type="button"
-            onMouseEnter={() => setSelected(id)}
-            onClick={() => {
-              setSelected(id);
-              confirm(id);
-            }}
+            onMouseEnter={() => select(id)}
+            // First tap moves the heart, a tap on the selected option confirms it.
+            onClick={() => (id === selected ? confirm(id) : select(id))}
             className="flex min-h-11 cursor-pointer touch-manipulation items-center text-left outline-none"
           >
             <span className="mr-2 inline-flex size-4 items-center sm:size-6 md:size-7">
