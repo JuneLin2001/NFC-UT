@@ -27,6 +27,8 @@ const SaveMenu = ({
   onReturn,
 }: SaveMenuProps) => {
   const [selected, setSelected] = useState<Option>("save");
+  // Right after saving, the file shows in yellow with "File saved." until dismissed.
+  const [justSaved, setJustSaved] = useState(false);
 
   const select = (option: Option) => {
     if (option === selected) return;
@@ -37,6 +39,7 @@ const SaveMenu = ({
   const confirm = (option: Option) => {
     if (option === "save") {
       play(saveSound);
+      setJustSaved(true);
       onSave?.();
     } else onReturn?.();
   };
@@ -45,9 +48,12 @@ const SaveMenu = ({
     const onKeyDown = (e: KeyboardEvent) => {
       // A focused button already turns Enter into a click.
       if (e.key === "Enter" && e.target instanceof HTMLButtonElement) return;
-      if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+      const isConfirm = e.key === "Enter" || e.key === "z" || e.key === "Z";
+      if (justSaved) {
+        if (isConfirm) setJustSaved(false);
+      } else if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
         select(selected === "save" ? "return" : "save");
-      } else if (e.key === "Enter" || e.key === "z" || e.key === "Z") {
+      } else if (isConfirm) {
         confirm(selected);
       }
     };
@@ -55,14 +61,42 @@ const SaveMenu = ({
     return () => window.removeEventListener("keydown", onKeyDown);
   });
 
-  return (
-    <div className="w-full max-w-2xl border-4 border-white bg-black p-4 font-ut text-xl leading-none text-white select-none sm:border-6 sm:px-8 sm:py-6 sm:text-3xl md:text-4xl">
-      <div className="grid grid-cols-12 whitespace-nowrap">
+  const frameClass =
+    "w-full max-w-2xl border-4 border-white bg-black p-4 text-left font-ut text-xl leading-none select-none sm:border-6 sm:px-8 sm:py-6 sm:text-3xl md:text-4xl";
+
+  // Spans keep the markup valid inside the button frame below.
+  const details = (
+    <>
+      <span className="grid grid-cols-12 whitespace-nowrap">
         <span className="col-span-4">{name}</span>
         <span className="col-span-3">LV {lv}</span>
         <span className="col-span-5 text-right">{time}</span>
-      </div>
-      <div className="mt-3 sm:mt-5 md:mt-6">{location}</div>
+      </span>
+      <span className="mt-3 block sm:mt-5 md:mt-6">{location}</span>
+    </>
+  );
+
+  // After saving, the whole frame is one button that dismisses "File saved.".
+  if (justSaved) {
+    return (
+      <button
+        type="button"
+        onClick={() => setJustSaved(false)}
+        className={`${frameClass} cursor-pointer touch-manipulation text-ut-yellow outline-none`}
+      >
+        {details}
+        <span className="mt-4 flex min-h-11 items-center sm:mt-8 md:mt-10">
+          {/* Same indent as the options, where the heart sits. */}
+          <span className="mr-2 inline-flex size-4 sm:size-6 md:size-7" />
+          File saved.
+        </span>
+      </button>
+    );
+  }
+
+  return (
+    <div className={`${frameClass} text-white`}>
+      {details}
       <div className="mt-4 grid grid-cols-2 sm:mt-8 md:mt-10">
         {OPTIONS.map(({ id, label }) => (
           <button

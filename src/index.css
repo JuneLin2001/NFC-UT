@@ -8,6 +8,11 @@
 
 @theme {
   --font-ut: "Determination Mono", monospace;
+  --color-ut-yellow: #ffff00;
+}
+
+@utility pixelated {
+  image-rendering: pixelated;
 }
 
 body {
