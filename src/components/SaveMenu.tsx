@@ -66,10 +66,10 @@ const SaveMenu = ({
 
   return (
     <div className="w-full max-w-2xl border-4 border-white bg-black p-4 font-ut text-xl leading-none text-white select-none sm:border-6 sm:px-8 sm:py-6 sm:text-3xl md:text-4xl">
-      <div className="grid grid-cols-12">
-        <span className="col-span-5">{name}</span>
-        <span className="col-span-4">LV {lv}</span>
-        <span className="col-span-3">{time}</span>
+      <div className="grid grid-cols-12 whitespace-nowrap">
+        <span className="col-span-4">{name}</span>
+        <span className="col-span-3">LV {lv}</span>
+        <span className="col-span-5 text-right">{time}</span>
       </div>
       <div className="mt-3 sm:mt-5 md:mt-6">{location}</div>
       <div className="mt-4 grid grid-cols-2 sm:mt-8 md:mt-10">
