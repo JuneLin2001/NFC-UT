@@ -2,7 +2,7 @@
 
 @font-face {
   font-family: "Determination Mono";
-  src: url("/determination-mono-web-font/DeterminationMonoWebRegular-Z5oq.ttf") format("truetype");
+  src: url("./assets/fonts/DeterminationMonoWebRegular-Z5oq.ttf") format("truetype");
   font-display: swap;
 }
 

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Heart from "./Heart";
+import { play, saveSound, selectSound } from "../utils/sound";
 
 type Option = "save" | "return";
 
@@ -16,18 +17,6 @@ const OPTIONS: { id: Option; label: string }[] = [
   { id: "save", label: "Save" },
   { id: "return", label: "Return" },
 ];
-
-// Older iOS Safari can't play Ogg, so fall back to the WAV there.
-const saveSound = new Audio();
-saveSound.src = `${import.meta.env.BASE_URL}${saveSound.canPlayType("audio/ogg; codecs=vorbis") ? "save.ogg" : "save.wav"}`;
-
-const selectSound = new Audio(`${import.meta.env.BASE_URL}ut_menu_select.mp3`);
-
-// Restart from the beginning so rapid triggers each play; ignore autoplay blocks.
-const play = (sound: HTMLAudioElement) => {
-  sound.currentTime = 0;
-  sound.play().catch(() => {});
-};
 
 const SaveMenu = ({
   name,
@@ -54,6 +43,8 @@ const SaveMenu = ({
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
+      // A focused button already turns Enter into a click.
+      if (e.key === "Enter" && e.target instanceof HTMLButtonElement) return;
       if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
         select(selected === "save" ? "return" : "save");
       } else if (e.key === "Enter" || e.key === "z" || e.key === "Z") {
@@ -77,7 +68,14 @@ const SaveMenu = ({
           <button
             key={id}
             type="button"
-            onMouseEnter={() => select(id)}
+            // Taps also fire enter and focus events; only follow a real mouse
+            // and keyboard focus, so a tap on the other option just moves the heart.
+            onPointerEnter={(e) => {
+              if (e.pointerType === "mouse") select(id);
+            }}
+            onFocus={(e) => {
+              if (e.currentTarget.matches(":focus-visible")) select(id);
+            }}
             // First tap moves the heart, a tap on the selected option confirms it.
             onClick={() => (id === selected ? confirm(id) : select(id))}
             className="flex min-h-11 cursor-pointer touch-manipulation items-center text-left outline-none"
