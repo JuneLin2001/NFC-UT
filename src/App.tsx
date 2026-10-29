@@ -19,7 +19,7 @@ const App = () => {
 
   // Load the typing sound while the save point is on screen.
   useEffect(() => {
-    preload(textSound);
+    void preload(textSound);
   }, []);
 
   const handleSave = () => {

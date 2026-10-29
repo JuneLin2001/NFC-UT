@@ -18,7 +18,7 @@ const DialogBox = ({ pages, onDone }: DialogBoxProps) => {
   // Start typing only once the blip sound is loaded.
   useEffect(() => {
     let active = true;
-    preload(textSound).then(() => {
+    void preload(textSound).then(() => {
       if (active) setReady(true);
     });
     return () => {
@@ -69,7 +69,7 @@ const DialogBox = ({ pages, onDone }: DialogBoxProps) => {
         const shown = i === page ? count : 0;
         return (
           <p
-            key={i}
+            key={line}
             className={`col-start-1 row-start-1 flex gap-3 ${i === page ? "" : "invisible"}`}
           >
             <span>*</span>
