@@ -39,7 +39,7 @@ const App = () => {
       )}
       {stage === "menu" && (
         <SaveMenu
-          name={saved ? "Volare" : "EMPTY"}
+          name={saved ? "Frisk" : "EMPTY"}
           lv={saved ? 1 : 0}
           time="2026-11-01"
           location={saved ? "Kaohsiung, Taiwan" : "--"}
