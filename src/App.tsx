@@ -44,7 +44,7 @@ const App = () => {
           time="2026-11-01"
           location={saved ? "Kaohsiung, Taiwan" : "--"}
           onSave={handleSave}
-          onReturn={() => console.log("return")}
+          onReturn={() => setStage("start")}
         />
       )}
     </main>
