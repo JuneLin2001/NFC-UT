@@ -8,8 +8,16 @@ type Stage = "start" | "dialog" | "menu";
 
 const SAVED_KEY = "nfc-ut:saved";
 
-const DIALOG_PAGES = [
-  "(Finally hearing the music of your favorite game performed live...)",
+const beforeText =
+  "(Finally hearing the music of your favorite game performed live...)";
+const afterText =
+  "(Knowing the memories of tonight will always stay with you...)";
+
+// 2026-11-01 20:00 in Taiwan, regardless of the viewer's timezone.
+const SWITCH_TIME = new Date("2026-11-01T20:00:00+08:00").getTime();
+
+const getDialogPages = () => [
+  Date.now() >= SWITCH_TIME ? afterText : beforeText,
   "(It fills you with determination.)",
 ];
 
@@ -35,7 +43,7 @@ const App = () => {
     <main className="flex min-h-dvh items-center justify-center bg-black px-4">
       {stage === "start" && <SavePoint onActivate={() => setStage("dialog")} />}
       {stage === "dialog" && (
-        <DialogBox pages={DIALOG_PAGES} onDone={() => setStage("menu")} />
+        <DialogBox pages={getDialogPages()} onDone={() => setStage("menu")} />
       )}
       {stage === "menu" && (
         <SaveMenu
